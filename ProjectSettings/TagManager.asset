@@ -10,6 +10,8 @@ TagManager:
   - Key
   - Enemy
   - Platform
+  - Spring
+  - Dog
   layers:
   - Default
   - TransparentFX
@@ -46,4 +48,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 712650173
+    locked: 0
+  - name: Follower
+    uniqueID: 1970166479
     locked: 0

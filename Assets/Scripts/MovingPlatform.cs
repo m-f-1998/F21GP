@@ -2,13 +2,12 @@
 
 public class MovingPlatform : MonoBehaviour {
     
-    public float speed;
-    public float distance;
+    public float speed = 10f;
+    public float distance = 10f;
     private Vector3 startPosition;
     public enum Direction{Horizontal, Vertical, DiagonalLeft, DiagonalRight};
     public Direction direction;
 
-    
     void Start () {
         startPosition = transform.position;
     }
