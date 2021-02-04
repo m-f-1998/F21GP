@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class Pathfinding {
+public class Path {
     public static List<Point> FindPath(Grid grid, Point startPos, Point targetPos) {
         List<Node> nodes_path = _ImpFindPath(grid, startPos, targetPos);
 

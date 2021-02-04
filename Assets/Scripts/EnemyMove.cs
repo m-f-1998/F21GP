@@ -34,11 +34,5 @@
             XMoveDirection = 1;
         }
     }
-
-    void OnCollisionEnter2D(Collision2D coll){
-        if (coll.gameObject.tag == "Player") {
-            coll.collider.GetComponent<PlayerHealth>().health = 0f;
-        }
-    }
  
  }

@@ -2,15 +2,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-public class BestPathEnemy : MonoBehaviour {
+public class PointPathEnemy : MonoBehaviour { //It patrols between 4 locations. It might calculate it's path each time it reaches each location.
 
-    public GameObject target;
+    public Vector3[] targets;
     public int speed = 10;
 
     private bool[,] tilesmap;
     private Grid grid;
     private bool active;
     private int index = 0;
+    private int currentTarget = -1;
 
     void SetBlockable() {
         foreach (String tag in Constants.blockable_tags) {
@@ -42,12 +43,17 @@ public class BestPathEnemy : MonoBehaviour {
     }
 
     void Update() {
-        List<Point> path = new List<Point>(); // from (0, 0) to (Constants.WIDTH-1, Constants.HEIGHT-1)
-        if (active && index == 0) path = Path.FindPath(grid, point(transform.position), point(target.transform.position));
-        if (path.Count > 0) { // path will either be a list of Points (x, y), or an empty list if no path is found.
-            var p = new Vector3(path[index].x, path[index].y, 0);
-            if (transform.position != p) transform.position = Vector3.MoveTowards(transform.position, p, Time.deltaTime * speed);
-            else index = index < path.Count - 1 ? index + 1 : 0;
+        if (targets.Length > 0) {
+            List<Point> path = new List<Point>(); // from (0, 0) to (Constants.WIDTH-1, Constants.HEIGHT-1)
+            if (active && index == 0) {
+                currentTarget = currentTarget == targets.Length - 1 ? 0 : currentTarget + 1; 
+                path = Path.FindPath(grid, point(transform.position), point(targets[currentTarget]));
+            }
+            if (path.Count > 0) { // path will either be a list of Points (x, y), or an empty list if no path is found.
+                var p = new Vector3(path[index].x, path[index].y, 0);
+                if (transform.position != p) transform.position = Vector3.MoveTowards(transform.position, p, Time.deltaTime * speed);
+                else index = index < path.Count - 1 ? index + 1 : 0;
+            }
         }
     }
 
