@@ -15,8 +15,7 @@ public class PlayerScore : MonoBehaviour {
         playerScoreUI.gameObject.GetComponent<Text>().text = ("Score: " + playerScore);
         if (timeLeft < 0.1f) {
             // Timer Ran Out
-            SceneManager.LoadScene ("Level One");
-            FinishGame();
+            GetComponent<PlayerHealth>().Die();
         }
     }
     void OnTriggerEnter2D(Collider2D coll) {
@@ -28,10 +27,6 @@ public class PlayerScore : MonoBehaviour {
             playerScore += 20 + (int) (timeLeft * 5);
             //coll.gameObject.GetComponent<Renderer>().material.SetColor("_Color", Color.red);
             Destroy(coll.gameObject);
-        }
-        if (coll.gameObject.tag == "EndLevel") {
-            // Doorway Reached
-            FinishGame();
         }
     }
 

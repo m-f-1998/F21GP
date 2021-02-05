@@ -14,10 +14,10 @@ public class PlayerHealth : MonoBehaviour
         if (health == 0f) Die();
     }
 
-    void Die () {
+    public void Die () {
         GetComponent<PlayerScore>().FinishGame();
         // Show Score Screen Over Top
-        SceneManager.LoadScene("Level One");
         Debug.Log("Player Died");
+        SceneManager.LoadScene("Level One");
     }
 }

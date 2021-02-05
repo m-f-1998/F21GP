@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class Path {
     public static List<Point> FindPath(Grid grid, Point startPos, Point targetPos) {
@@ -18,19 +19,14 @@ public class Path {
         Node startNode = grid.nodes[startPos.x, startPos.y];
         Node targetNode = grid.nodes[targetPos.x, targetPos.y];
 
-        List<Node> openSet = new List<Node>();
+        //Debug.Log(startPos.x + " " + startPos.y);
+
+        Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
 
         while (openSet.Count > 0) {
-            Node currentNode = openSet[0];
-            for (int i = 1; i < openSet.Count; i++) {
-                if (openSet[i].fCost < currentNode.fCost || openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost) {
-                    currentNode = openSet[i];
-                }
-            }
-
-            openSet.Remove(currentNode);
+            Node currentNode = openSet.RemoveFirst();
             closedSet.Add(currentNode);
 
             if (currentNode == targetNode) {
@@ -38,11 +34,9 @@ public class Path {
             }
 
             foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
-                if (!neighbour.walkable || closedSet.Contains(neighbour)) {
-                    continue;
-                }
-
-                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour) * (int)(10.0f * neighbour.penalty);
+                if (!neighbour.walkable || closedSet.Contains(neighbour))continue;
+                
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
                 if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
                     neighbour.gCost = newMovementCostToNeighbour;
                     neighbour.hCost = GetDistance(neighbour, targetNode);
@@ -79,7 +73,7 @@ public class Path {
     }
 }
 
-public class Node {
+public class Node : IHeapItem<Node> {
     public bool walkable;
     public int gridX;
     public int gridY;
@@ -88,6 +82,7 @@ public class Node {
     public int gCost;
     public int hCost;
     public Node parent;
+    int heapIndex;
 
     public Node(float _price, int _gridX, int _gridY) {
         walkable = _price != 0.0f;
@@ -101,6 +96,23 @@ public class Node {
             return gCost + hCost;
         }
     }
+
+    public int HeapIndex {
+		get {
+			return heapIndex;
+		}
+		set {
+			heapIndex = value;
+		}
+	}
+
+	public int CompareTo(Node nodeToCompare) {
+		int compare = fCost.CompareTo(nodeToCompare.fCost);
+		if (compare == 0) {
+			compare = hCost.CompareTo(nodeToCompare.hCost);
+		}
+		return -compare;
+	}
 }
 
 public class Point {
@@ -184,6 +196,12 @@ public class Grid {
         }
     }
 
+    public int MaxSize {
+		get {
+			return gridSizeX * gridSizeY;
+		}
+	}
+
 
     public Grid(int width, int height, bool[,] walkable_tiles) {
         gridSizeX = width;
@@ -216,4 +234,105 @@ public class Grid {
 
         return neighbours;
     }
+}
+
+public class Heap<T> where T : IHeapItem<T> {
+	
+	T[] items;
+	int currentItemCount;
+	
+	public Heap(int maxHeapSize) {
+		items = new T[maxHeapSize];
+	}
+	
+	public void Add(T item) {
+		item.HeapIndex = currentItemCount;
+		items[currentItemCount] = item;
+		SortUp(item);
+		currentItemCount++;
+	}
+
+	public T RemoveFirst() {
+		T firstItem = items[0];
+		currentItemCount--;
+		items[0] = items[currentItemCount];
+		items[0].HeapIndex = 0;
+		SortDown(items[0]);
+		return firstItem;
+	}
+
+	public void UpdateItem(T item) {
+		SortUp(item);
+	}
+
+	public int Count {
+		get {
+			return currentItemCount;
+		}
+	}
+
+	public bool Contains(T item) {
+		return Equals(items[item.HeapIndex], item);
+	}
+
+	void SortDown(T item) {
+		while (true) {
+			int childIndexLeft = item.HeapIndex * 2 + 1;
+			int childIndexRight = item.HeapIndex * 2 + 2;
+			int swapIndex = 0;
+
+			if (childIndexLeft < currentItemCount) {
+				swapIndex = childIndexLeft;
+
+				if (childIndexRight < currentItemCount) {
+					if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0) {
+						swapIndex = childIndexRight;
+					}
+				}
+
+				if (item.CompareTo(items[swapIndex]) < 0) {
+					Swap (item,items[swapIndex]);
+				}
+				else {
+					return;
+				}
+
+			}
+			else {
+				return;
+			}
+
+		}
+	}
+	
+	void SortUp(T item) {
+		int parentIndex = (item.HeapIndex-1)/2;
+		
+		while (true) {
+			T parentItem = items[parentIndex];
+			if (item.CompareTo(parentItem) > 0) {
+				Swap (item,parentItem);
+			}
+			else {
+				break;
+			}
+
+			parentIndex = (item.HeapIndex-1)/2;
+		}
+	}
+	
+	void Swap(T itemA, T itemB) {
+		items[itemA.HeapIndex] = itemB;
+		items[itemB.HeapIndex] = itemA;
+		int itemAIndex = itemA.HeapIndex;
+		itemA.HeapIndex = itemB.HeapIndex;
+		itemB.HeapIndex = itemAIndex;
+	}
+}
+
+public interface IHeapItem<T> : IComparable<T> {
+	int HeapIndex {
+		get;
+		set;
+	}
 }

@@ -16,8 +16,8 @@ public class BestPathEnemy : MonoBehaviour {
         foreach (String tag in Constants.blockable_tags) {
             foreach (GameObject g in GameObject.FindGameObjectsWithTag(tag)) {
                 Bounds bounds = g.GetComponent<BoxCollider2D>().bounds;
-                int top = (int) Math.Round(bounds.max.y), btm = (int) Math.Round(bounds.min.y);
-                int left = (int) Math.Round(bounds.min.x), right = (int) Math.Round(bounds.max.x);
+                int top = (int) Math.Ceiling(bounds.max.y), btm = (int) Math.Ceiling(bounds.min.y);
+                int left = (int) Math.Ceiling(bounds.min.x), right = (int) Math.Ceiling(bounds.max.x);
 
                 for (int j = left; j >= 0 && j <= Constants.WIDTH-1 && j < right; j++) {
                     if (btm >= 0 && btm <= Constants.HEIGHT-1) tilesmap[j, btm] = false;
