@@ -3,38 +3,29 @@ using System.Collections.Generic;
 using System;
 
 public class Path {
-    public static List<Point> FindPath(Grid grid, Point startPos, Point targetPos) {
-        List<Node> nodes_path = _ImpFindPath(grid, startPos, targetPos);
-
-        List<Point> ret = new List<Point>();
-        if (nodes_path != null) {
-            foreach (Node node in nodes_path) {
-                ret.Add(new Point(node.gridX, node.gridY));
-            }
-        }
-        return ret;
-    }
-
-    private static List<Node> _ImpFindPath(Grid grid, Point startPos, Point targetPos) {
-        Node startNode = grid.nodes[startPos.x, startPos.y];
-        Node targetNode = grid.nodes[targetPos.x, targetPos.y];
-
-        //Debug.Log(startPos.x + " " + startPos.y);
+    public static List<Vector2> FindPath(Grid grid, Vector2 pos1, Vector2 pos2, ref List<Vector2> path) {
+        Node startNode = grid.nodes[(int) Math.Ceiling(pos1.x), (int) Math.Ceiling(pos1.y)];
+        Node targetNode = grid.nodes[(int) Math.Ceiling(pos2.x), (int) Math.Ceiling(pos2.y)];
 
         Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
         HashSet<Node> closedSet = new HashSet<Node>();
-        openSet.Add(startNode);
+        openSet.Add(startNode);    
 
         while (openSet.Count > 0) {
             Node currentNode = openSet.RemoveFirst();
             closedSet.Add(currentNode);
 
             if (currentNode == targetNode) {
-                return RetracePath(grid, startNode, targetNode);
+                while (currentNode != startNode) {
+                    path.Add(new Vector2(currentNode.gridX, currentNode.gridY));
+                    currentNode = currentNode.parent;
+                }
+                path.Reverse();
+                break;
             }
 
             foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
-                if (!neighbour.walkable || closedSet.Contains(neighbour))continue;
+                if (!neighbour.walkable || closedSet.Contains(neighbour)) continue;
                 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
                 if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour)) {
@@ -48,18 +39,6 @@ public class Path {
             }
         }
 
-        return null;
-    }
-
-    private static List<Node> RetracePath(Grid grid, Node startNode, Node endNode) {
-        List<Node> path = new List<Node>();
-        Node currentNode = endNode;
-
-        while (currentNode != startNode) {
-            path.Add(currentNode);
-            currentNode = currentNode.parent;
-        }
-        path.Reverse();
         return path;
     }
 
@@ -77,16 +56,14 @@ public class Node : IHeapItem<Node> {
     public bool walkable;
     public int gridX;
     public int gridY;
-    public float penalty;
 
     public int gCost;
     public int hCost;
     public Node parent;
-    int heapIndex;
+    public int heapIndex;
 
     public Node(float _price, int _gridX, int _gridY) {
         walkable = _price != 0.0f;
-        penalty = _price;
         gridX = _gridX;
         gridY = _gridY;
     }
@@ -115,75 +92,11 @@ public class Node : IHeapItem<Node> {
 	}
 }
 
-public class Point {
-    public int x;
-    public int y;
-
-    public Point() {
-        x = 0;
-        y = 0;
-    }
-
-    public Point(int iX, int iY) {
-        this.x = iX;
-        this.y = iY;
-    }
-
-    public Point(Point b) {
-        x = b.x;
-        y = b.y;
-    }
-
-    public override int GetHashCode() {
-        return x ^ y;
-    }
-
-    public override bool Equals(System.Object obj) {
-        Point p = (Point)obj;
-
-        if (ReferenceEquals(null, p)) {
-            return false;
-        }
-
-        return (x == p.x) && (y == p.y);
-    }
-
-    public bool Equals(Point p) {
-        if (ReferenceEquals(null, p)) {
-            return false;
-        }
-        return (x == p.x) && (y == p.y);
-    }
-
-    public static bool operator ==(Point a, Point b) {
-        if (System.Object.ReferenceEquals(a, b)) {
-            return true;
-        }
-        if (ReferenceEquals(null, a)) {
-            return false;
-        }
-        if (ReferenceEquals(null, b)) {
-            return false;
-        }
-        return a.x == b.x && a.y == b.y;
-    }
-
-    public static bool operator !=(Point a, Point b) {
-        return !(a == b);
-    }
-
-    public Point Set(int iX, int iY) {
-        this.x = iX;
-        this.y = iY;
-        return this;
-    }
-}
-
 public class Grid {
     public Node[,] nodes;
     int gridSizeX, gridSizeY;
 
-    public Grid(int width, int height, float[,] tiles_costs) {
+    public Grid(int width, int height, int[,] tiles_costs) {
         gridSizeX = width;
         gridSizeY = height;
         nodes = new Node[width, height];

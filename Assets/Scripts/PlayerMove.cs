@@ -4,7 +4,6 @@ public class PlayerMove : MonoBehaviour {
     public int playerSpeed = 10;
     private bool facingRight = false;
     public int playerJumpPower = 1250;
-    private float moveX;
     public bool isGrounded = false;
     public bool canDoubleJump = false;
 

@@ -419,6 +419,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Box (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_RootOrder
@@ -427,12 +432,12 @@ PrefabInstance:
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.859999
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -589,6 +594,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Box (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_RootOrder
@@ -597,12 +607,12 @@ PrefabInstance:
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 15.759998
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -754,6 +764,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Box (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_RootOrder
@@ -762,12 +777,12 @@ PrefabInstance:
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 11.919999
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -943,6 +958,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
@@ -954,12 +974,12 @@ PrefabInstance:
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.159999
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -1092,7 +1112,7 @@ GameObject:
   - component: {fileID: 1184317540}
   - component: {fileID: 1184317539}
   - component: {fileID: 1184317538}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground (1)
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1227,7 +1247,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 7
 --- !u!61 &1299989631
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1266,6 +1286,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Box (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_RootOrder
@@ -1274,12 +1299,12 @@ PrefabInstance:
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 8.0599985
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -1334,7 +1359,7 @@ GameObject:
   - component: {fileID: 1502630869}
   - component: {fileID: 1502630868}
   - component: {fileID: 1502630866}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: test-wall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1529,6 +1554,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
       propertyPath: m_TagString
       value: Ground
       objectReference: {fileID: 0}
@@ -1670,7 +1700,7 @@ GameObject:
   - component: {fileID: 1828456370}
   - component: {fileID: 1828456369}
   - component: {fileID: 1828456371}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Ground
   m_TagString: Ground
   m_Icon: {fileID: 0}
@@ -1779,6 +1809,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Box (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_RootOrder
@@ -1787,12 +1822,12 @@ PrefabInstance:
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 22.7
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 9.959999
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663147, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -1847,6 +1882,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Ground
+      objectReference: {fileID: 0}
+    - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 9022482397997663144, guid: 46b0bc0e506b84ab9b57321b8ad9dcd2,
         type: 3}
@@ -1931,6 +1971,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 975052864707547794, guid: 48f2dec6ebb6c47569f4985f090bad92,
+        type: 3}
+      propertyPath: unwalkableMask.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 975052864707547795, guid: 48f2dec6ebb6c47569f4985f090bad92,
         type: 3}
@@ -2153,6 +2198,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Spring
+      objectReference: {fileID: 0}
+    - target: {fileID: 5957553279003787340, guid: de94a3d3532f8496a93f6323a88fb7f0,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5957553279003787440, guid: de94a3d3532f8496a93f6323a88fb7f0,
         type: 3}
