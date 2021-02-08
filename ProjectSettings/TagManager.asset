@@ -13,6 +13,8 @@ TagManager:
   - Spring
   - Dog
   - Exit
+  - Wall
+  - SecretGround
   layers:
   - Default
   - TransparentFX

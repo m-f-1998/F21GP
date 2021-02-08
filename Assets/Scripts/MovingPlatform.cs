@@ -5,7 +5,7 @@ public class MovingPlatform : MonoBehaviour {
     public float speed = 10f;
     public float distance = 10f;
     private Vector3 startPosition;
-    public enum Direction{Horizontal, Vertical, DiagonalLeft, DiagonalRight};
+    public enum Direction{Horizontal, Vertical, Down, DiagonalLeft, DiagonalRight};
     public Direction direction;
 
     void Start () {
@@ -21,6 +21,10 @@ public class MovingPlatform : MonoBehaviour {
             case Direction.Vertical:
                 if ((speed < 0 && transform.position.y < startPosition.y) || (speed > 0 && transform.position.y > startPosition.y + distance)) speed *= -1;
                 transform.position = new Vector2(transform.position.x, transform.position.y + speed * Time.deltaTime);
+                break;
+            case Direction.Down:
+                if ((speed < 0 && transform.position.y > startPosition.y) || (speed > 0 && transform.position.y < startPosition.y - distance)) speed *= -1;
+                transform.position = new Vector2(transform.position.x, transform.position.y - speed * Time.deltaTime);
                 break;
             case Direction.DiagonalLeft:
                 if ((speed < 0 && transform.position.x > startPosition.x) || (speed > 0 && transform.position.x < startPosition.x + distance)

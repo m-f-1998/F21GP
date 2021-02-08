@@ -4,6 +4,7 @@
  
     public int EnemySpeed;
     public int XMoveDirection;
+    public int YMoveDirection;
 
     public bool bounce = false;
     private float speed = 10f;
@@ -16,7 +17,7 @@
     
     void Update(){
         if (bounce) {
-            if ((speed < 0 && transform.position.y < startPosition.y) || (speed > 0 && transform.position.y > startPosition.y + distance)) speed *= -1;
+            if ((speed < 0 && transform.position.y < startPosition.y) || (speed > 0 && transform.position.y > startPosition.y + YMoveDirection)) speed *= -1;
             transform.position = new Vector2(transform.position.x, transform.position.y + speed * Time.deltaTime);
         } else {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(XMoveDirection, 0));
