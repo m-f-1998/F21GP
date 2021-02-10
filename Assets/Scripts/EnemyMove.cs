@@ -8,7 +8,6 @@
 
     public bool bounce = false;
     private float speed = 10f;
-    private float distance = 10f;
     private Vector3 startPosition;
 
     void Start () {

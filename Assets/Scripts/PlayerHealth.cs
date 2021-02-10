@@ -14,6 +14,11 @@ public class PlayerHealth : MonoBehaviour
         if (health == 0f) Die();
     }
 
+    public void reduceHealthByOne() {
+        health--;
+        GetComponent<PlayerScore>().playerScore -= 5 + (int) (GetComponent<PlayerScore>().timeLeft * 2.5);
+    }
+
     public void Die () {
         GetComponent<PlayerScore>().FinishGame();
         // Show Score Screen Over Top

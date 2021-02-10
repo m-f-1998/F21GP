@@ -15,6 +15,10 @@ TagManager:
   - Exit
   - Wall
   - SecretGround
+  - SafeGround
+  - SecretKey
+  - SecretWall
+  - DeadlyKey
   layers:
   - Default
   - TransparentFX
