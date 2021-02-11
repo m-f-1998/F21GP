@@ -20,6 +20,7 @@ public class PlayerMove : MonoBehaviour {
     public Text goal;
 
     void Start() {
+        // TODO: Dog
         //Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Dog").GetComponent<Collider2D>(), GetComponent<Collider2D>());
     }
 
@@ -43,44 +44,50 @@ public class PlayerMove : MonoBehaviour {
             }
         }
 
-        // MARK: Player Spawn Position
-
         int pickObject  = rnd.Next(0, res.Count);
-        int pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-        transform.position = new Vector2(pickX, res[pickObject][2]);
-        res.Remove(res[pickObject]);
 
-        goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[currentLevel][0] + "'";
-
-        // MARK: NORMAL KEY
-
-        for (int i = 0; i < Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]; i++) {
-            ColorUtility.TryParseHtmlString(Constants.colorsStandard[currentLevel][i + 1], out color);
-            pickObject  = rnd.Next(0, res.Count);
-            pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-            var prefab = Instantiate(key, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
-            prefab.GetComponent<SpriteRenderer>().color = color;
+        if (res[pickObject][0] < res[pickObject][1]) {
+            // MARK: Player Spawn Position
+            int pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
+            transform.position = new Vector2(pickX, res[pickObject][2]);
             res.Remove(res[pickObject]);
-        }
 
-        // MARK: DEADLY KEYS
-        var test = (int) Math.Floor(UnityEngine.Random.Range(0f, 3f));
-        ColorUtility.TryParseHtmlString(Constants.colorsDeadly[test], out color);
-        for (int i = 0; i < Constants.keys[currentLevel]["NUM_DEADLY_KEYS"]; i++) {
-            pickObject  = rnd.Next(0, res.Count);
-            pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-            var prefab = Instantiate(deadlyKey, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
-            prefab.GetComponent<SpriteRenderer>().color = color;
-            res.Remove(res[pickObject]);
-        }
+            if (currentLevel != 2) {
 
-        //MARK: SECRET KEYS
+                goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[currentLevel][0] + "'";
+            
+            }
 
-        for (int i = 0; i < Constants.keys[currentLevel]["NUM_SECRET_KEYS"]; i++) {
-            pickObject  = rnd.Next(0, res.Count);
-            pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);            
-            var prefab = Instantiate(secretKey, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
-            prefab.GetComponent<SpriteRenderer>().color = Color.yellow;
+            // MARK: NORMAL KEY
+
+            for (int i = 0; i < Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]; i++) {
+                ColorUtility.TryParseHtmlString(Constants.colorsStandard[currentLevel][i + 1], out color);
+                pickObject  = rnd.Next(0, res.Count);
+                pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
+                var prefab = Instantiate(key, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
+                prefab.GetComponent<SpriteRenderer>().color = color;
+                res.Remove(res[pickObject]);
+            }
+
+            // MARK: DEADLY KEYS
+            var test = (int) Math.Floor(UnityEngine.Random.Range(0f, 3f));
+            ColorUtility.TryParseHtmlString(Constants.colorsDeadly[test], out color);
+            for (int i = 0; i < Constants.keys[currentLevel]["NUM_DEADLY_KEYS"]; i++) {
+                pickObject  = rnd.Next(0, res.Count);
+                pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
+                var prefab = Instantiate(deadlyKey, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
+                prefab.GetComponent<SpriteRenderer>().color = color;
+                res.Remove(res[pickObject]);
+            }
+
+            //MARK: SECRET KEYS
+
+            for (int i = 0; i < Constants.keys[currentLevel]["NUM_SECRET_KEYS"]; i++) {
+                pickObject  = rnd.Next(0, res.Count);
+                pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);            
+                var prefab = Instantiate(secretKey, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
+                prefab.GetComponent<SpriteRenderer>().color = Color.yellow;
+            }
         }
     }
 
@@ -125,6 +132,18 @@ public class PlayerMove : MonoBehaviour {
             else if (coll.gameObject.tag == "Platform") {
                 transform.SetParent(coll.transform);
                 isGrounded = true;
+            } else if (coll.gameObject.tag == "Door") {
+                if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]) {
+                    if (currentLevel == 3) {
+                        // TODO: Show Ending Screen
+                    } else {
+                        GetComponent<PlayerScore>().ResetKeys();
+                        currentLevel += 1;
+                        SceneManager.LoadScene("Level " + currentLevel);
+                    }
+                } else {
+                    // TODO: Show Alert - Keys Not Collected
+                }
             } else if (coll.gameObject.tag == "Enemy") {
                 if (coll.gameObject.GetComponent<EnemyMove>() != null && !coll.gameObject.GetComponent<EnemyMove>().bounce) {
                     Vector3 imp = coll.gameObject.transform.position - transform.position;

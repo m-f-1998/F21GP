@@ -23,6 +23,6 @@ public class PlayerHealth : MonoBehaviour
         GetComponent<PlayerScore>().FinishGame();
         // Show Score Screen Over Top
         Debug.Log("Player Died");
-        SceneManager.LoadScene("Level One");
+        SceneManager.LoadScene("Level 1");
     }
 }

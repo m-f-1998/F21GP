@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerScore : MonoBehaviour {
@@ -8,6 +7,15 @@ public class PlayerScore : MonoBehaviour {
     public int playerScore = 0;
     public GameObject timeLeftUI;
     public GameObject playerScoreUI;
+    private int numKeysCollected = 0;
+
+    public int GetNumKeysCollected() {
+        return numKeysCollected;
+    }
+
+    public void ResetKeys() {
+        numKeysCollected = 0;
+    }
 
     void Update () {
         timeLeft -= Time.deltaTime;
@@ -16,6 +24,7 @@ public class PlayerScore : MonoBehaviour {
         if (timeLeft < 0.1f || playerScore < 0) {
             // Timer Ran Out
             GetComponent<PlayerHealth>().Die();
+            // TODO: Show Alert Screen
         }
     }
     void OnTriggerEnter2D(Collider2D coll) {
@@ -24,11 +33,10 @@ public class PlayerScore : MonoBehaviour {
             Destroy(coll.gameObject);
         }
         if(coll.gameObject.tag == "SecretKey") {
-            GameObject secretWall = GameObject.FindGameObjectWithTag("SecretWall");
-            if (secretWall != null) {
+            foreach (GameObject secretWall in GameObject.FindGameObjectsWithTag("SecretWall")) {
                 Destroy(secretWall);
-                // Show Secret Unlock
             }
+            // Show Secret Unlock Animation
             Destroy(coll.gameObject);
         }
         if(coll.gameObject.tag == "DeadlyKey") {

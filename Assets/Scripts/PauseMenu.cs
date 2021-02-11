@@ -2,13 +2,13 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour {
+public class PauseMenu : MonoBehaviour {
 
-    public Button start;
+    public Button resume;
     public Text score;
 
     void Start() {
-		start.onClick.AddListener(StartGame);
+		resume.onClick.AddListener(resumeGame);
 
         if (!(PlayerPrefs.HasKey("high-score"))) {
             PlayerPrefs.SetString("high-score", "0");
@@ -17,8 +17,9 @@ public class MainMenu : MonoBehaviour {
         score.text = "High Score: " + PlayerPrefs.GetString("high-score");
     }
 
-    void StartGame() {
-        SceneManager.LoadScene("Level 1");
+    void resumeGame() {
+        GetComponent<PauseMenuCopy>()._paused = false;
+        SceneManager.UnloadSceneAsync ("PauseMenu");
     }
 
 }

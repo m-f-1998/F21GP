@@ -2,12 +2,11 @@
  
  public class EnemyMove : MonoBehaviour {
  
-    public int EnemySpeed;
-    public int XMoveDirection;
-    public int YMoveDirection;
-
+    public int EnemySpeed = 10;
+    public int YMoveDirection = 10;
     public bool bounce = false;
-    private float speed = 10f;
+
+    private int XMoveDirection = 1;
     private Vector3 startPosition;
 
     void Start () {
@@ -16,8 +15,8 @@
     
     void Update(){
         if (bounce) {
-            if ((speed < 0 && transform.position.y < startPosition.y) || (speed > 0 && transform.position.y > startPosition.y + YMoveDirection)) speed *= -1;
-            transform.position = new Vector2(transform.position.x, transform.position.y + speed * Time.deltaTime);
+            if ((EnemySpeed < 0 && transform.position.y < startPosition.y) || (EnemySpeed > 0 && transform.position.y > startPosition.y + YMoveDirection)) EnemySpeed *= -1;
+            transform.position = new Vector2(transform.position.x, transform.position.y + EnemySpeed * Time.deltaTime);
         } else {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, new Vector2(XMoveDirection, 0));
             gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2(XMoveDirection, 0) * EnemySpeed;
@@ -28,11 +27,7 @@
     }
 
     void Flip() {
-        if (XMoveDirection > 0) {
-            XMoveDirection = -1;
-        } else {
-            XMoveDirection = 1;
-        }
+        XMoveDirection = XMoveDirection > 0 ? -1 : 1;
     }
  
  }

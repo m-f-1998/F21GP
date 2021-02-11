@@ -13,7 +13,7 @@ public class Constants {
                 {"NUM_SECRET_KEYS", 1}
             }},
             { 2,  new Dictionary<string, int>() {
-                {"NUM_NORMAL_KEYS", 1},
+                {"NUM_NORMAL_KEYS", 0},
                 {"NUM_DEADLY_KEYS", 0},
                 {"NUM_SECRET_KEYS", 0}
             }},
