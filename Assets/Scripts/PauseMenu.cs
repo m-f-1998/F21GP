@@ -1,25 +1,39 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour {
 
-    public Button resume;
     public Text score;
+    public GameObject panel;
+    public GameObject player;
+    public static bool GameIsPaused = false;
 
     void Start() {
-		resume.onClick.AddListener(resumeGame);
-
-        if (!(PlayerPrefs.HasKey("high-score"))) {
-            PlayerPrefs.SetString("high-score", "0");
-        }
-        
-        score.text = "High Score: " + PlayerPrefs.GetString("high-score");
+        panel.SetActive(GameIsPaused);
+        score.text = "Current Score: " + player.GetComponent<PlayerScore>().totalScore;
     }
 
-    void resumeGame() {
-        GetComponent<PauseMenuCopy>()._paused = false;
-        SceneManager.UnloadSceneAsync ("PauseMenu");
+    void Update() {
+        if (Input.GetKeyDown(KeyCode.P)) {
+            if (GameIsPaused) {
+                Resume();
+            } else {
+                Pause();
+            }
+        }
+    }
+
+    public void Resume() {
+        GameIsPaused = false;
+        panel.SetActive(GameIsPaused);
+        Time.timeScale = 1f;
+    }
+
+    void Pause() {
+        score.text = "Current Score: " + player.GetComponent<PlayerScore>().totalScore;
+        GameIsPaused = true;
+        panel.SetActive(GameIsPaused);
+        Time.timeScale = 0f;
     }
 
 }

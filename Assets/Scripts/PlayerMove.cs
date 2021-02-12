@@ -134,7 +134,10 @@ public class PlayerMove : MonoBehaviour {
                 isGrounded = true;
             } else if (coll.gameObject.tag == "Door") {
                 if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]) {
+                    if (int.Parse(PlayerPrefs.GetString("score-level-" + currentLevel)) < GetComponent<PlayerScore>().levelScore)
+                        PlayerPrefs.SetString("score-level-" + currentLevel, GetComponent<PlayerScore>().levelScore.ToString());
                     if (currentLevel == 3) {
+                        GetComponent<PlayerScore>().FinishGame();
                         // TODO: Show Ending Screen
                     } else {
                         GetComponent<PlayerScore>().ResetKeys();
