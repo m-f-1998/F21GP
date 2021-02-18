@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class Constants {
     public const int LIVES = 3;
-    public const int HEIGHT = 200; // TODO: Update When Designing Level
+    public const int HEIGHT = 200;
     public const int WIDTH = 200;
 
     public static readonly Dictionary<int, Dictionary<string, int>> keys =

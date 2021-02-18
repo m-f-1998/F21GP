@@ -6,10 +6,12 @@ public class MainMenu : MonoBehaviour {
 
     public Button start;
     public Button score;
+    public Button instructions;
 
     void Start() {
 		start.onClick.AddListener(StartGame);
         score.onClick.AddListener(HighScore);
+        instructions.onClick.AddListener(Instructions);
 
         if (!(PlayerPrefs.HasKey("high-score"))) {
             PlayerPrefs.SetString("high-score", "0");
@@ -31,6 +33,10 @@ public class MainMenu : MonoBehaviour {
 
     void HighScore() {
         SceneManager.LoadScene("HighScore");
+    }
+
+    void Instructions() {
+        SceneManager.LoadScene("Instructions");
     }
 
 }

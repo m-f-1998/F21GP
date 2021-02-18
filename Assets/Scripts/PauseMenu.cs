@@ -6,6 +6,7 @@ public class PauseMenu : MonoBehaviour {
     public Text score;
     public GameObject panel;
     public GameObject player;
+    public Camera camera;
     public static bool GameIsPaused = false;
 
     void Start() {
@@ -24,12 +25,14 @@ public class PauseMenu : MonoBehaviour {
     }
 
     public void Resume() {
+        camera.GetComponent<AudioSource>().Play();
         GameIsPaused = false;
         panel.SetActive(GameIsPaused);
         Time.timeScale = 1f;
     }
 
     void Pause() {
+        camera.GetComponent<AudioSource>().Pause();
         score.text = "Current Score: " + player.GetComponent<PlayerScore>().totalScore;
         GameIsPaused = true;
         panel.SetActive(GameIsPaused);

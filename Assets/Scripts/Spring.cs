@@ -5,9 +5,12 @@ public class Spring : MonoBehaviour {
 
     public float ySpringSpeed = 100f;
     public float xSpringSpeed = 100000f;
+    public AudioClip springJump;
     
     void OnCollisionEnter2D(Collision2D coll){
         if (coll.gameObject.tag == "Player") {
+            GetComponent<AudioSource> ().clip = springJump;
+            GetComponent<AudioSource> ().Play ();
             Vector3 imp = coll.gameObject.transform.position - transform.position;
             if (Mathf.Abs(imp.x) > Mathf.Abs(imp.y)) {
                 if (x_axis) {

@@ -19,9 +19,24 @@ public class PlayerMove : MonoBehaviour {
     private Color color;
     public Text goal;
 
+    public Button nextLevel;
+    public GameObject nextLevelPanel;
+    public GameObject[] stars;
+    public Text score;
+    public Text alert;
+
+    public Text deathReason;
+    public Button restartLevel;
+
+    public Animator animator;
+
+    public Camera camera;
+    public AudioClip deathJump;
+
     void Start() {
-        // TODO: Dog
-        //Physics2D.IgnoreCollision(GameObject.FindGameObjectWithTag("Dog").GetComponent<Collider2D>(), GetComponent<Collider2D>());
+        nextLevelPanel.SetActive(false);
+        nextLevel.onClick.AddListener(NextLevel);
+        restartLevel.onClick.AddListener(RestartLevel);
     }
 
      void OnEnable() {
@@ -39,7 +54,7 @@ public class PlayerMove : MonoBehaviour {
                 var temp_res = new List<int>();
                 temp_res.Add((int) Math.Ceiling(g.transform.position.x - g.transform.localScale.x / 2));
                 temp_res.Add((int) Math.Ceiling(g.transform.position.x + g.transform.localScale.x / 2));
-                temp_res.Add((int) Math.Ceiling(g.transform.position.y + g.transform.localScale.y / 2) + 2);
+                temp_res.Add((int) Math.Ceiling(g.transform.position.y + g.transform.localScale.y / 2) + 1);
                 res.Add(temp_res);
             }
         }
@@ -47,21 +62,17 @@ public class PlayerMove : MonoBehaviour {
         int pickObject  = rnd.Next(0, res.Count);
 
         if (res[pickObject][0] < res[pickObject][1]) {
-            // MARK: Player Spawn Position
             int pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-            transform.position = new Vector2(pickX, res[pickObject][2]);
-            res.Remove(res[pickObject]);
+            //transform.position = new Vector2(pickX, res[pickObject][2]);
+            //res.Remove(res[pickObject]);
+            int goalColor = rnd.Next(0, Constants.colorsStandard.Count);
 
             if (currentLevel != 2) {
-
-                goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[currentLevel][0] + "'";
-            
+                goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[goalColor][0] + "'";
             }
 
-            // MARK: NORMAL KEY
-
             for (int i = 0; i < Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]; i++) {
-                ColorUtility.TryParseHtmlString(Constants.colorsStandard[currentLevel][i + 1], out color);
+                ColorUtility.TryParseHtmlString(Constants.colorsStandard[goalColor][i + 1], out color);
                 pickObject  = rnd.Next(0, res.Count);
                 pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
                 var prefab = Instantiate(key, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
@@ -69,7 +80,6 @@ public class PlayerMove : MonoBehaviour {
                 res.Remove(res[pickObject]);
             }
 
-            // MARK: DEADLY KEYS
             var test = (int) Math.Floor(UnityEngine.Random.Range(0f, 3f));
             ColorUtility.TryParseHtmlString(Constants.colorsDeadly[test], out color);
             for (int i = 0; i < Constants.keys[currentLevel]["NUM_DEADLY_KEYS"]; i++) {
@@ -79,8 +89,6 @@ public class PlayerMove : MonoBehaviour {
                 prefab.GetComponent<SpriteRenderer>().color = color;
                 res.Remove(res[pickObject]);
             }
-
-            //MARK: SECRET KEYS
 
             for (int i = 0; i < Constants.keys[currentLevel]["NUM_SECRET_KEYS"]; i++) {
                 pickObject  = rnd.Next(0, res.Count);
@@ -92,8 +100,10 @@ public class PlayerMove : MonoBehaviour {
     }
 
     void Update() {
+        animator.SetFloat("Speed", Math.Abs(Input.GetAxis("Horizontal") * playerSpeed));
         if (isGrounded && Input.GetButtonDown("Jump")) {
             Jump();
+            animator.SetBool("IsJumping", true);
             canDoubleJump = true;
         } else if (canDoubleJump && Input.GetButtonDown("Jump")) {
             Jump();
@@ -121,59 +131,79 @@ public class PlayerMove : MonoBehaviour {
         transform.localScale = localScale;
     }
 
+    void RestartLevel() {
+        GetComponent<PlayerScore>().ResetKeys();
+        SceneManager.LoadScene("Level " + currentLevel);
+        camera.GetComponent<AudioSource>().Play();
+    }
+    
+    void NextLevel() {
+        if (currentLevel == 3) {
+            GetComponent<PlayerScore>().FinishGame();
+            SceneManager.LoadScene("Main Menu");
+        } else {
+            GetComponent<PlayerScore>().ResetKeys();
+            currentLevel += 1;
+            SceneManager.LoadScene("Level " + currentLevel);
+            camera.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    void OnTriggerEnter2D(Collider2D coll) {
+        if (coll.gameObject.tag == "Exit") {
+            if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]) {
+                if (int.Parse(PlayerPrefs.GetString("score-level-" + currentLevel)) < GetComponent<PlayerScore>().levelScore)
+                    PlayerPrefs.SetString("score-level-" + currentLevel, GetComponent<PlayerScore>().levelScore.ToString());
+                nextLevelPanel.SetActive(true);
+                camera.GetComponent<AudioSource>().Pause();
+                score.text = "Score: " + GetComponent<PlayerScore>().levelScore.ToString();
+                Time.timeScale = 0f;
+                for (int i = 0; i < 2 /* num starts */; i++) {
+                    stars[i].SetActive(true);
+                }
+            } else {
+                alert.text = "You're Missing Some Keys!";
+                Invoke("DisableText", 2.5f);
+            }
+        }
+    }
+
+    void DisableText() {
+        alert.text = "";
+    }
+
     void OnCollisionEnter2D(Collision2D coll){
         var temp = tempY;
         if (temp != -1) tempY = -1;
         if (temp != -1 && gameObject.transform.position.y + 25 < temp) {
+            deathReason.text = "You Died: Fell From A Great Hight";
             GetComponent<PlayerHealth>().Die();
         } else {
-            if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "SafeGround" || coll.gameObject.tag == "SecretGround")
+            if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "SafeGround" || coll.gameObject.tag == "SecretGround") {
                 isGrounded = true;
-            else if (coll.gameObject.tag == "Platform") {
+                animator.SetBool("IsJumping", false);
+            } else if (coll.gameObject.tag == "Platform") {
                 transform.SetParent(coll.transform);
                 isGrounded = true;
-            } else if (coll.gameObject.tag == "Door") {
-                if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]) {
-                    if (int.Parse(PlayerPrefs.GetString("score-level-" + currentLevel)) < GetComponent<PlayerScore>().levelScore)
-                        PlayerPrefs.SetString("score-level-" + currentLevel, GetComponent<PlayerScore>().levelScore.ToString());
-                    if (currentLevel == 3) {
-                        GetComponent<PlayerScore>().FinishGame();
-                        // TODO: Show Ending Screen
-                    } else {
-                        GetComponent<PlayerScore>().ResetKeys();
-                        currentLevel += 1;
-                        SceneManager.LoadScene("Level " + currentLevel);
-                    }
-                } else {
-                    // TODO: Show Alert - Keys Not Collected
-                }
+                animator.SetBool("IsJumping", false);
             } else if (coll.gameObject.tag == "Enemy") {
-                if (coll.gameObject.GetComponent<EnemyMove>() != null && !coll.gameObject.GetComponent<EnemyMove>().bounce) {
-                    Vector3 imp = coll.gameObject.transform.position - transform.position;
-                    if (Mathf.Abs(imp.x) <= Mathf.Abs(imp.y)) {
-                        if (imp.y <= 0) {
-                            GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
-                            coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 200);
-                            coll.gameObject.GetComponent<Rigidbody2D>().gravityScale = 20;
-                            coll.gameObject.GetComponent<Rigidbody2D>().freezeRotation = false;
-                            coll.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-                            coll.gameObject.GetComponent<EnemyMove>().enabled = false;
-                        }
-                    } else {
-                        if (imp.x <= 0) {
-                            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                            GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 120), ForceMode2D.Impulse);
-                            GetComponent<Rigidbody2D>().AddForce(Vector2.right * 10000);
-                            GetComponent<PlayerHealth>().reduceHealthByOne();
-                        } else {
-                            GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                            GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 120), ForceMode2D.Impulse);
-                            GetComponent<Rigidbody2D>().AddForce(Vector2.left * 10000);
-                            GetComponent<PlayerHealth>().reduceHealthByOne();
-                        }
-                    }
+                Vector3 imp = coll.gameObject.transform.position - transform.position;
+                var destroyEnemy = coll.gameObject.GetComponent<StandardEnemy>() != null && !coll.gameObject.GetComponent<StandardEnemy>().yAxis && Mathf.Abs(imp.x) <= Mathf.Abs(imp.y) && imp.y <= 0;
+                if (destroyEnemy) {
+                    GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
+                    coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 200);
+                    coll.gameObject.GetComponent<Rigidbody2D>().gravityScale = 20;
+                    coll.gameObject.GetComponent<Rigidbody2D>().freezeRotation = false;
+                    coll.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+                    coll.gameObject.GetComponent<StandardEnemy>().enabled = false;
+                    GetComponent<AudioSource> ().clip = deathJump;
+                    GetComponent<AudioSource> ().Play ();
                 } else {
-                    GetComponent<PlayerHealth>().health = 0f;
+                    Vector2 forceDir = imp.x <= 0 ? Vector2.right : Vector2.left;
+                    GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+                    GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 120), ForceMode2D.Impulse);
+                    GetComponent<Rigidbody2D>().AddForce(forceDir * 10000);
+                    GetComponent<PlayerHealth>().reduceHealthByOne();
                 }
             }
         }

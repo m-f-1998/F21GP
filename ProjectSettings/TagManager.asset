@@ -19,6 +19,7 @@ TagManager:
   - SecretKey
   - SecretWall
   - DeadlyKey
+  - Star
   layers:
   - Default
   - TransparentFX

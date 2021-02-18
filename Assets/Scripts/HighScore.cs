@@ -1,6 +1,6 @@
-﻿using UnityEngine.SceneManagement;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class HighScore : MonoBehaviour {
     public Text levelOneScore;
@@ -10,6 +10,7 @@ public class HighScore : MonoBehaviour {
     public Button back;
 
     void Start() {
+        back.onClick.AddListener(BackButton);
         totalScore.text = PlayerPrefs.GetString("high-score");
         levelOneScore.text = PlayerPrefs.GetString("score-level-1");
         levelTwoScore.text = PlayerPrefs.GetString("score-level-2");
