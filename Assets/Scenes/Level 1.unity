@@ -185,16 +185,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2872055404547818822, guid: cb4f23504c9014babaa83ec824c50711,
         type: 3}
-      propertyPath: hit
-      value: 
-      objectReference: {fileID: 8300000, guid: ce44f5886b8417f4d867038263fa3eed, type: 3}
-    - target: {fileID: 2872055404547818822, guid: cb4f23504c9014babaa83ec824c50711,
-        type: 3}
-      propertyPath: died
-      value: 
-      objectReference: {fileID: 8300000, guid: 0520e29d0a06c834e89392b804ed5507, type: 3}
-    - target: {fileID: 2872055404547818822, guid: cb4f23504c9014babaa83ec824c50711,
-        type: 3}
       propertyPath: camera
       value: 
       objectReference: {fileID: 519420031}
@@ -243,11 +233,6 @@ PrefabInstance:
       propertyPath: nextLevelPanel
       value: 
       objectReference: {fileID: 91039604}
-    - target: {fileID: 2872055404547818823, guid: cb4f23504c9014babaa83ec824c50711,
-        type: 3}
-      propertyPath: stars.Array.size
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 2872055404547818823, guid: cb4f23504c9014babaa83ec824c50711,
         type: 3}
       propertyPath: stars.Array.data[0]
@@ -2530,7 +2515,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 30, y: -100}
+  m_AnchoredPosition: {x: 0, y: -100}
   m_SizeDelta: {x: 500, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &544089316
@@ -4276,7 +4261,7 @@ PrefabInstance:
     - target: {fileID: 5957553279003787440, guid: de94a3d3532f8496a93f6323a88fb7f0,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 26.71
+      value: 27.7
       objectReference: {fileID: 0}
     - target: {fileID: 5957553279003787440, guid: de94a3d3532f8496a93f6323a88fb7f0,
         type: 3}
