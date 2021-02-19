@@ -1,3 +1,11 @@
+/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 10-02-2021 21:42:32
+ * @modify date 19-02-2021 09:26:22
+ * @desc [System Constants]
+ */
+
 using System.Collections.Generic;
 
 public class Constants {

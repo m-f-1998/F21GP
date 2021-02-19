@@ -1,4 +1,12 @@
-﻿ using UnityEngine;
+﻿/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 05-02-2021 13:11:53
+ * @modify date 19-02-2021 09:26:22
+ * @desc [Movement of a Standard Enemy (fixed movement on the X or Y axis)]
+ */
+
+ using UnityEngine;
  
  public class StandardEnemy : MonoBehaviour {
  

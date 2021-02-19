@@ -1,12 +1,18 @@
-﻿using UnityEngine;
+﻿/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 03-02-2021 08:04:37
+ * @modify date 19-02-2021 09:26:22
+ * @desc [Main Menu Screen]
+ */
+
+using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour {
 
-    public Button start;
-    public Button score;
-    public Button instructions;
+    public Button start, score, instructions;
 
     void Start() {
 		start.onClick.AddListener(StartGame);
@@ -27,15 +33,15 @@ public class MainMenu : MonoBehaviour {
         }
     }
 
-    void StartGame() {
+    private void StartGame() {
         SceneManager.LoadScene("Level 1");
     }
 
-    void HighScore() {
-        SceneManager.LoadScene("HighScore");
+    private void HighScore() {
+        SceneManager.LoadScene("High Score");
     }
 
-    void Instructions() {
+    private void Instructions() {
         SceneManager.LoadScene("Instructions");
     }
 

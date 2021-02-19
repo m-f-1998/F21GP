@@ -1,24 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 07-02-2021 20:38:32
+ * @modify date 19-02-2021 09:26:22
+ * @desc [Controls Main Camera, Moving with Player, and its Boundaries ]
+ */
+
 using UnityEngine;
 
-public class CameraSystem : MonoBehaviour
-{
+public class CameraSystem : MonoBehaviour {
     private GameObject player;
-    public float xMin;
-    public float xMax;
-    public float yMin;
-    public float yMax;
+    public float xMin, xMax, yMin, yMax;
 
-    // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         player = GameObject.FindGameObjectWithTag("Player");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         float x = Mathf.Clamp(player.transform.position.x, xMin, xMax);
         float y = Mathf.Clamp(player.transform.position.y, yMin, yMax);
         gameObject.transform.position = new Vector3(x, y, gameObject.transform.position.z);

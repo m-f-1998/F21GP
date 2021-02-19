@@ -1,23 +1,28 @@
+/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 07-02-2021 20:38:32
+ * @modify date 19-02-2021 09:26:22
+ * @desc [Boid birds - flock behaviour]
+ */
+
 using UnityEngine;
 
 public class BoidController : MonoBehaviour {
+    
     public GameObject boidPrefab;
-
     public int spawnCount = 5;
-
     public float spawnRadius = 7.0f;
 
     [Range(0.1f, 20.0f)]
-    public float velocity = 6.0f;
+    public float velocity = 6.0f, rotationCoeff = 4.0f;
 
     [Range(0.0f, 0.9f)]
     public float velocityVariation = 0.9f;
 
-    [Range(0.1f, 20.0f)]
-    public float rotationCoeff = 4.0f;
-
     [Range(0.1f, 10.0f)]
     public float neighborDist = 8.0f;
+
     public LayerMask searchLayer;
 
     void Start() {

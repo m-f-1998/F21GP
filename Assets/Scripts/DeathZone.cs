@@ -1,11 +1,15 @@
-﻿using UnityEngine;
+﻿/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 02-02-2021 10:38:56
+ * @modify date 19-02-2021 09:26:22
+ * @desc [Water]
+ */
+
+using UnityEngine;
 
 public class DeathZone : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D coll) {
-        if(coll.tag == "Player") {
-            coll.GetComponent<PlayerMove>().deathReason.text = "You Died: It's Difficult To Swim";
-            Time.timeScale = 0f;
-            coll.GetComponent<PlayerHealth>().Die();
-        }
+        if(coll.tag == "Player") coll.GetComponent<PlayerHealth>().Die("It's Difficult To Swim");
     }
 }

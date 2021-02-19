@@ -1,40 +1,43 @@
-﻿using UnityEngine;
-using UnityEngine.SceneManagement;
+﻿/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 06-02-2021 10:56:32
+ * @modify date 18-02-2021 09:26:22
+ * @desc [Keep Tally of a Player's Health]
+ */
+ 
+using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour {
 
-    public float health;
-    public GameObject deathPanel;
-    public Camera camera;
-    public AudioClip died;
-    public AudioClip hit;
+    public GameObject death;
+    public AudioClip died, hit;
 
-    void Start () {
-        health = 3f;
-        deathPanel.SetActive(false);
+    private float health = 3f;
+
+    void Start() {
+        death.SetActive(false);
     }
 
-    public void reduceHealthByOne () {
+    public void reduceHealthByOne() {
         health--;
-        if (health == 0f) {
-            GetComponent<PlayerMove>().deathReason.text = "You Died: No Health Left";
-            Time.timeScale = 0f;
-            Die();
-        } else {
-            GetComponent<AudioSource> ().clip = hit;
-            GetComponent<AudioSource> ().Play ();
-            if (GetComponent<PlayerScore>().totalScore - 5 + (int) (GetComponent<PlayerScore>().timeLeft * 2.5) < 0) {
-                GetComponent<PlayerScore>().totalScore -= 5 + (int) (GetComponent<PlayerScore>().timeLeft * 2.5);
-                GetComponent<PlayerScore>().levelScore -= 5 + (int) (GetComponent<PlayerScore>().timeLeft * 2.5);
-            }
+        if (health == 0f) Die("No Health Left");
+        else {
+            PlaySound(hit);
+            GetComponent<PlayerScore>().SetReducedScore();
         }
     }
 
-    public void Die () {
-        GetComponent<AudioSource>().clip = died;
-        GetComponent<AudioSource>().Play ();
-        deathPanel.SetActive(true);
-        camera.GetComponent<AudioSource>().Pause();
-        Debug.Log("Player Died");
+    public void Die(string reason) {
+        Time.timeScale = 0f;
+        PlaySound(died);
+        GetComponent<PlayerMove>().deathReason.text = "You Died: " + reason;
+        death.SetActive(true);
+        Camera.main.GetComponent<AudioSource>().Pause();
+    }
+
+    private void PlaySound(AudioClip x) {
+        GetComponent<AudioSource>().clip = x;
+        GetComponent<AudioSource>().Play();
     }
 }

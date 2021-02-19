@@ -1,45 +1,45 @@
-﻿using UnityEngine;
+﻿/**
+ * @author Matthew Frankland
+ * @email [developer@matthewfrankland.co.uk]
+ * @create date 19-02-2021 16:08:48
+ * @modify date 19-02-2021 16:08:48
+ * @desc [Main Controller for Moving Player]
+ */
+
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using System;
 using UnityEngine.UI;
 
 public class PlayerMove : MonoBehaviour {
-    public int playerSpeed = 10;
-    private float tempY = -1;
-    public int currentLevel = 1;
-    private bool facingRight = false;
-    public int playerJumpPower = 1250;
-    public bool isGrounded = false;
-    public bool canDoubleJump = false;
-    private System.Random rnd = new System.Random();
-    public GameObject key;
-    public GameObject secretKey;
-    public GameObject deadlyKey;
-    private Color color;
-    public Text goal;
-
-    public Button nextLevel;
-    public GameObject nextLevelPanel;
+    public int speed = 10;
+    public GameObject key, secretKey, deadlyKey, nextLevelPanel;
+    public Button next, restartLevel;
     public GameObject[] stars;
-    public Text score;
-    public Text alert;
-
-    public Text deathReason;
-    public Button restartLevel;
-
+    public Text goal, score, alert, deathReason;
     public Animator animator;
+    public AudioClip secretKeySound, deathJump;
 
-    public Camera camera;
-    public AudioClip deathJump;
+    private System.Random rnd = new System.Random();
+    private bool facingRight = false, grounded = false, doubleJump = false;
+    private float jumpHeight = -1;
+    private int level = 1;
 
     void Start() {
         nextLevelPanel.SetActive(false);
-        nextLevel.onClick.AddListener(NextLevel);
+        next.onClick.AddListener(NextLevel);
         restartLevel.onClick.AddListener(RestartLevel);
     }
 
-     void OnEnable() {
+    void Update() {
+        animator.SetFloat("Speed", Math.Abs(Input.GetAxis("Horizontal") * speed));
+        if ((grounded || doubleJump) && Input.GetButtonDown("Jump")) Jump();
+        if ((Input.GetAxis("Horizontal") < 0.0f && !facingRight) || (Input.GetAxis("Horizontal") > 0.0f && facingRight)) FlipPlayer();
+        GetComponent<Rigidbody2D>().velocity = new Vector2 (Input.GetAxis("Horizontal") * speed, GetComponent<Rigidbody2D>().velocity.y);
+    }
+
+    void OnEnable() { // Generate Starting Positions for Keys and Player Each Time Scene Is Called (i.e. after dying)
         SceneManager.sceneLoaded += OnLevelFinishedLoading;
     }
          
@@ -51,173 +51,201 @@ public class PlayerMove : MonoBehaviour {
         List<List<int>> res = new List<List<int>>(); // min x, max x, y
         foreach (string tag in Constants.spawnable) {
             foreach (GameObject g in GameObject.FindGameObjectsWithTag(tag)) {
-                var temp_res = new List<int>();
-                temp_res.Add((int) Math.Ceiling(g.transform.position.x - g.transform.localScale.x / 2));
-                temp_res.Add((int) Math.Ceiling(g.transform.position.x + g.transform.localScale.x / 2));
-                temp_res.Add((int) Math.Ceiling(g.transform.position.y + g.transform.localScale.y / 2) + 1);
-                res.Add(temp_res);
+                res.Add(
+                    new List<int>() {
+                        (int) Math.Ceiling(g.transform.position.x - g.transform.localScale.x / 2),
+                        (int) Math.Ceiling(g.transform.position.x + g.transform.localScale.x / 2),
+                        (int) Math.Ceiling(g.transform.position.y + g.transform.localScale.y / 2) + 1
+                    }
+                );
             }
         }
 
-        int pickObject  = rnd.Next(0, res.Count);
+        int ranSafeGround  = rnd.Next(0, res.Count);
+        if (res[ranSafeGround][0] < res[ranSafeGround][1]) {
+            int ranX  = rnd.Next(res[ranSafeGround][0], res[ranSafeGround][1]); // random starting position
+            //transform.position = new Vector2(ranX, res[ranSafeGround][2]);
+            //res.Remove(res[ranSafeGround]);
+            
+            int col = rnd.Next(0, Constants.colorsStandard.Count);
+            if (level != 2) goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[col][0] + "'";
 
-        if (res[pickObject][0] < res[pickObject][1]) {
-            int pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-            //transform.position = new Vector2(pickX, res[pickObject][2]);
-            //res.Remove(res[pickObject]);
-            int goalColor = rnd.Next(0, Constants.colorsStandard.Count);
+            for (int i = 0; i < Constants.keys[level]["NUM_NORMAL_KEYS"]; i++)
+                createKey(ref res, key).GetComponent<SpriteRenderer>().color = hexColor(Constants.colorsStandard[col][i + 1]);
 
-            if (currentLevel != 2) {
-                goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[goalColor][0] + "'";
-            }
+            for (int i = 0; i < Constants.keys[level]["NUM_DEADLY_KEYS"]; i++)
+                createKey(ref res, deadlyKey).GetComponent<SpriteRenderer>().color = hexColor(Constants.colorsDeadly[rnd.Next(0, 3)]);
 
-            for (int i = 0; i < Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]; i++) {
-                ColorUtility.TryParseHtmlString(Constants.colorsStandard[goalColor][i + 1], out color);
-                pickObject  = rnd.Next(0, res.Count);
-                pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-                var prefab = Instantiate(key, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
-                prefab.GetComponent<SpriteRenderer>().color = color;
-                res.Remove(res[pickObject]);
-            }
-
-            var test = (int) Math.Floor(UnityEngine.Random.Range(0f, 3f));
-            ColorUtility.TryParseHtmlString(Constants.colorsDeadly[test], out color);
-            for (int i = 0; i < Constants.keys[currentLevel]["NUM_DEADLY_KEYS"]; i++) {
-                pickObject  = rnd.Next(0, res.Count);
-                pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);
-                var prefab = Instantiate(deadlyKey, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
-                prefab.GetComponent<SpriteRenderer>().color = color;
-                res.Remove(res[pickObject]);
-            }
-
-            for (int i = 0; i < Constants.keys[currentLevel]["NUM_SECRET_KEYS"]; i++) {
-                pickObject  = rnd.Next(0, res.Count);
-                pickX  = rnd.Next(res[pickObject][0], res[pickObject][1]);            
-                var prefab = Instantiate(secretKey, new Vector2(pickX, res[pickObject][2]), Quaternion.identity);
-                prefab.GetComponent<SpriteRenderer>().color = Color.yellow;
-            }
-        }
-    }
-
-    void Update() {
-        animator.SetFloat("Speed", Math.Abs(Input.GetAxis("Horizontal") * playerSpeed));
-        if (isGrounded && Input.GetButtonDown("Jump")) {
-            Jump();
-            animator.SetBool("IsJumping", true);
-            canDoubleJump = true;
-        } else if (canDoubleJump && Input.GetButtonDown("Jump")) {
-            Jump();
-            canDoubleJump = false;
-        }
-
-        if (Input.GetAxis("Horizontal") < 0.0f && !facingRight) {
-            FlipPlayer();
-        } else if (Input.GetAxis("Horizontal") > 0.0f && facingRight) {
-            FlipPlayer();
-        }
-        
-        gameObject.GetComponent<Rigidbody2D>().velocity = new Vector2 (Input.GetAxis("Horizontal") * playerSpeed, gameObject.GetComponent<Rigidbody2D>().velocity.y);
-    }
-
-    void Jump() {
-        GetComponent<Rigidbody2D>().AddForce(Vector2.up * playerJumpPower);
-        isGrounded = false;
-    }
-
-    void FlipPlayer() {
-        facingRight = !facingRight;
-        Vector2 localScale = gameObject.transform.localScale;
-        localScale.x *= -1;
-        transform.localScale = localScale;
-    }
-
-    void RestartLevel() {
-        GetComponent<PlayerScore>().ResetKeys();
-        SceneManager.LoadScene("Level " + currentLevel);
-        camera.GetComponent<AudioSource>().Play();
-    }
-    
-    void NextLevel() {
-        if (currentLevel == 3) {
-            GetComponent<PlayerScore>().FinishGame();
-            SceneManager.LoadScene("Main Menu");
-        } else {
-            GetComponent<PlayerScore>().ResetKeys();
-            currentLevel += 1;
-            SceneManager.LoadScene("Level " + currentLevel);
-            camera.GetComponent<AudioSource>().Play();
+            for (int i = 0; i < Constants.keys[level]["NUM_SECRET_KEYS"]; i++)
+                createKey(ref res, secretKey).GetComponent<SpriteRenderer>().color = Color.yellow;
         }
     }
 
     void OnTriggerEnter2D(Collider2D coll) {
-        if (coll.gameObject.tag == "Exit") {
-            if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[currentLevel]["NUM_NORMAL_KEYS"]) {
-                if (int.Parse(PlayerPrefs.GetString("score-level-" + currentLevel)) < GetComponent<PlayerScore>().levelScore)
-                    PlayerPrefs.SetString("score-level-" + currentLevel, GetComponent<PlayerScore>().levelScore.ToString());
-                nextLevelPanel.SetActive(true);
-                camera.GetComponent<AudioSource>().Pause();
-                score.text = "Score: " + GetComponent<PlayerScore>().levelScore.ToString();
-                Time.timeScale = 0f;
-                for (int i = 0; i < 2 /* num starts */; i++) {
-                    stars[i].SetActive(true);
-                }
-            } else {
-                alert.text = "You're Missing Some Keys!";
-                Invoke("DisableText", 2.5f);
-            }
+        switch (coll.gameObject.tag) {
+            case "Exit":
+                if (/*GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[level]["NUM_NORMAL_KEYS"]*/true) ShowFinishScene();
+                else CreateAlert("You're Missing Some Keys!");
+                break;
+            case "SecretKey":
+                GetComponent<AudioSource>().clip = secretKeySound;
+                GetComponent<AudioSource>().Play();
+                CreateAlert("Secret Area Unlocked!");
+                foreach (GameObject i in GameObject.FindGameObjectsWithTag("SecretWall")) Destroy(i);
+                Destroy(coll.gameObject);
+                break;
+            case "DeadlyKey":
+                GetComponent<PlayerHealth>().Die("Watch Out For That Deadly Key!");
+                Destroy(coll.gameObject);
+                break;
         }
-    }
-
-    void DisableText() {
-        alert.text = "";
     }
 
     void OnCollisionEnter2D(Collision2D coll){
-        var temp = tempY;
-        if (temp != -1) tempY = -1;
-        if (temp != -1 && gameObject.transform.position.y + 25 < temp) {
-            deathReason.text = "You Died: Fell From A Great Hight";
-            GetComponent<PlayerHealth>().Die();
+        if (jumpHeight != -1 && transform.position.y + 25 < jumpHeight) {
+            GetComponent<PlayerHealth>().Die("Fell From A Great Height");
         } else {
-            if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "SafeGround" || coll.gameObject.tag == "SecretGround") {
-                isGrounded = true;
-                animator.SetBool("IsJumping", false);
-            } else if (coll.gameObject.tag == "Platform") {
-                transform.SetParent(coll.transform);
-                isGrounded = true;
-                animator.SetBool("IsJumping", false);
-            } else if (coll.gameObject.tag == "Enemy") {
-                Vector3 imp = coll.gameObject.transform.position - transform.position;
-                var destroyEnemy = coll.gameObject.GetComponent<StandardEnemy>() != null && !coll.gameObject.GetComponent<StandardEnemy>().yAxis && Mathf.Abs(imp.x) <= Mathf.Abs(imp.y) && imp.y <= 0;
-                if (destroyEnemy) {
-                    GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
-                    coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 200);
-                    coll.gameObject.GetComponent<Rigidbody2D>().gravityScale = 20;
-                    coll.gameObject.GetComponent<Rigidbody2D>().freezeRotation = false;
-                    coll.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-                    coll.gameObject.GetComponent<StandardEnemy>().enabled = false;
-                    GetComponent<AudioSource> ().clip = deathJump;
-                    GetComponent<AudioSource> ().Play ();
-                } else {
-                    Vector2 forceDir = imp.x <= 0 ? Vector2.right : Vector2.left;
-                    GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-                    GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 120), ForceMode2D.Impulse);
-                    GetComponent<Rigidbody2D>().AddForce(forceDir * 10000);
-                    GetComponent<PlayerHealth>().reduceHealthByOne();
-                }
+            switch (coll.gameObject.tag) {
+                case "Platform":
+                    transform.SetParent(coll.transform);
+                    goto case "Ground";
+                case "Ground":
+                case "SafeGround":
+                case "SecretGround":
+                    grounded = true;
+                    animator.SetBool("IsJumping", false);
+                    break;
+                case "Enemy":
+                    HitEnemy(coll);
+                    break;
             }
         }
+        jumpHeight = -1;
     }
     
     void OnCollisionExit2D(Collision2D coll){
         if (coll.gameObject.tag == "Platform") {
-            isGrounded = false;
-            tempY = gameObject.transform.position.y;
+            grounded = false;
+            jumpHeight = transform.position.y;
             transform.SetParent(null);
         } else if (coll.gameObject.tag == "Ground" || coll.gameObject.tag == "SafeGround" || coll.gameObject.tag == "SecretGround") {
-            tempY = gameObject.transform.position.y;
-            isGrounded = false;
+            jumpHeight = transform.position.y;
+            grounded = false;
         }
+    }
+
+    //MARK: Getters
+    
+    public int GetLevel() {
+        return level;
+    }
+
+    public bool GetGrounded() {
+        return grounded;
+    }
+
+    //MARK: Helper functions
+
+    private GameObject createKey(ref List<List<int>> res, GameObject key) {
+        int ranSafeGround  = rnd.Next(0, res.Count);
+        int ranX  = rnd.Next(res[ranSafeGround][0], res[ranSafeGround][1]);
+        var prefab = Instantiate(key, new Vector2(ranX, res[ranSafeGround][2]), Quaternion.identity);
+        res.Remove(res[ranSafeGround]);
+        return prefab;
+    }
+
+    private Color hexColor(string hexColor) {
+        Color c = new Color();
+        ColorUtility.TryParseHtmlString(hexColor, out c);
+        return c;
+    }
+
+    private void Jump() {
+        GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1250);
+        if (grounded) {
+            animator.SetBool("IsJumping", true);
+            doubleJump = true;
+            grounded = false;
+        } else {
+            doubleJump = false;
+        }
+    }
+
+    private void FlipPlayer() {
+        facingRight = !facingRight;
+        Vector2 localScale = transform.localScale;
+        localScale.x *= -1;
+        transform.localScale = localScale;
+    }
+
+    private void RestartLevel() {
+        GetComponent<PlayerScore>().ResetKeys();
+        SceneManager.LoadScene("Level " + level);
+        Camera.main.GetComponent<AudioSource>().Play();
+    }
+    
+    private void NextLevel() {
+        if (level == 3) {
+            GetComponent<PlayerScore>().FinishGame();
+            SceneManager.LoadScene("Main Menu");
+        } else {
+            GetComponent<PlayerScore>().ResetKeys();
+            level += 1;
+            SceneManager.LoadScene("Level " + level);
+            Camera.main.GetComponent<AudioSource>().Play();
+        }
+    }
+
+    private void CreateAlert(string m) {
+        alert.text = m;
+        Invoke("DisableText", 2.5f);
+    }
+
+    private void DisableText() {
+        alert.text = "";
+    }
+
+    private void HitEnemy(Collision2D coll) {
+        Vector3 imp = coll.gameObject.transform.position - transform.position;
+        if (Mathf.Abs(imp.x) <= Mathf.Abs(imp.y) && imp.y <= 0) {
+            if (coll.gameObject.GetComponent<StandardEnemy>() != null && !coll.gameObject.GetComponent<StandardEnemy>().yAxis) { // Destroy Enemy
+                GetComponent<Rigidbody2D>().AddForce(Vector2.up * 1000);
+                coll.gameObject.GetComponent<Rigidbody2D>().AddForce(Vector2.right * 200);
+                coll.gameObject.GetComponent<Rigidbody2D>().gravityScale = 20;
+                coll.gameObject.GetComponent<Rigidbody2D>().freezeRotation = false;
+                coll.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+                GetComponent<AudioSource> ().clip = deathJump;
+                GetComponent<AudioSource> ().Play();
+                return;
+            }
+        }
+        Vector2 forceDir = imp.x <= 0 ? Vector2.right : Vector2.left;
+        GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        GetComponent<Rigidbody2D>().AddForce(new Vector2(0, 120), ForceMode2D.Impulse);
+        GetComponent<Rigidbody2D>().AddForce(forceDir * 10000);
+        GetComponent<PlayerHealth>().reduceHealthByOne();
+    }
+
+    private void SetStars() {
+        var numCoins = GameObject.FindGameObjectsWithTag("Coin").Length;
+        var minTime3 = GetComponent<PlayerScore>().timeLeft - (GetComponent<PlayerScore>().timeLeft/3);
+        var minTime2 = GetComponent<PlayerScore>().timeLeft - (GetComponent<PlayerScore>().timeLeft/2);
+        var stars3 = ((numCoins * (10 + (minTime3 * 5))) + (Constants.keys[level]["NUM_NORMAL_KEYS"] * (20 + (minTime3 * 5)))) + (minTime3 * 5);
+        var stars2 = ((numCoins * (10 + (minTime2 * 5))) + (Constants.keys[level]["NUM_NORMAL_KEYS"] * (20 + (minTime2 * 5)))) + (minTime2 * 5);
+
+        if (GetComponent<PlayerScore>().GetLevelScore() > minTime3) for (int i = 0; i < 2; i++) stars[i].SetActive(true);
+        else if (GetComponent<PlayerScore>().GetLevelScore() > minTime2) for (int i = 0; i < 1; i++) stars[i].SetActive(true);
+        else stars[0].SetActive(true);
+    }
+
+    private void ShowFinishScene() {
+        if (int.Parse(PlayerPrefs.GetString("score-level-" + level.ToString())) < GetComponent<PlayerScore>().GetLevelScore())
+            PlayerPrefs.SetString(("score-level-" + level.ToString()), GetComponent<PlayerScore>().GetLevelScore().ToString());
+        nextLevelPanel.SetActive(true);
+        Camera.main.GetComponent<AudioSource>().Pause();
+        score.text = "Score: " + GetComponent<PlayerScore>().GetLevelScore().ToString();
+        Time.timeScale = 0f;
+        SetStars();
     }
 
 }
