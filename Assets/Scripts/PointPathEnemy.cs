@@ -39,7 +39,6 @@ public class PointPathEnemy : MonoBehaviour {
             if (pathIndex < path.Count) {
                 var p = new Vector3(path[pathIndex].x, path[pathIndex].y, 0);
                 if (transform.position != p) {
-                    Debug.Log(p);
                     transform.position = Vector3.MoveTowards(transform.position, p, Time.deltaTime * speed);
                 } else {
                     if (pathIndex < path.Count-1) pathIndex++;
@@ -52,8 +51,6 @@ public class PointPathEnemy : MonoBehaviour {
                     }
                     
                 }
-            } else {
-                Debug.Log("path failed " + transform.position + ", " + directions[goalIndex]);
             }
         }
     }

@@ -27,6 +27,7 @@ public class PlayerMove : MonoBehaviour {
     private int level = 1;
 
     void Start() {
+        level = 1;
         nextLevelPanel.SetActive(false);
         next.onClick.AddListener(NextLevel);
         restartLevel.onClick.AddListener(RestartLevel);
@@ -64,8 +65,8 @@ public class PlayerMove : MonoBehaviour {
         int ranSafeGround  = rnd.Next(0, res.Count);
         if (res[ranSafeGround][0] < res[ranSafeGround][1]) {
             int ranX  = rnd.Next(res[ranSafeGround][0], res[ranSafeGround][1]); // random starting position
-            //transform.position = new Vector2(ranX, res[ranSafeGround][2]);
-            //res.Remove(res[ranSafeGround]);
+            transform.position = new Vector2(ranX, res[ranSafeGround][2]);
+            res.Remove(res[ranSafeGround]);
             
             int col = rnd.Next(0, Constants.colorsStandard.Count);
             if (level != 2) goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[col][0] + "'";
@@ -84,7 +85,7 @@ public class PlayerMove : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D coll) {
         switch (coll.gameObject.tag) {
             case "Exit":
-                if (/*GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[level]["NUM_NORMAL_KEYS"]*/true) ShowFinishScene();
+                if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[level]["NUM_NORMAL_KEYS"]) ShowFinishScene();
                 else CreateAlert("You're Missing Some Keys!");
                 break;
             case "SecretKey":
