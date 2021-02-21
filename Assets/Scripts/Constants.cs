@@ -10,8 +10,8 @@ using System.Collections.Generic;
 
 public class Constants {
     public const int LIVES = 3;
-    public const int HEIGHT = 200;
-    public const int WIDTH = 200;
+    public const int HEIGHT = 225;
+    public const int WIDTH = 225;
 
     public static readonly Dictionary<int, Dictionary<string, int>> keys =
         new Dictionary<int, Dictionary<string, int>>() {

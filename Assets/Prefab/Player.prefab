@@ -123,7 +123,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.000000044703484, y: -0.0015740395}
+  m_Offset: {x: -0.0034255981, y: -0.00020378828}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -134,7 +134,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.68808925, y: 0.7478857}
+  m_Size: {x: 0.7250843, y: 0.72596276}
   m_EdgeRadius: 0
 --- !u!114 &2872055404547818822
 MonoBehaviour:
@@ -148,9 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79c7455dcfbb04ea78d48cbacd42f4fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 3
-  deathPanel: {fileID: 0}
-  camera: {fileID: 0}
+  death: {fileID: 0}
   died: {fileID: 8300000, guid: 0520e29d0a06c834e89392b804ed5507, type: 3}
   hit: {fileID: 8300000, guid: ce44f5886b8417f4d867038263fa3eed, type: 3}
 --- !u!114 &2872055404547818823
@@ -165,29 +163,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bd8c076eca914e26a4cca05270ff6ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerSpeed: 10
-  currentLevel: 1
-  playerJumpPower: 1250
-  isGrounded: 0
-  canDoubleJump: 0
+  speed: 10
   key: {fileID: 8053070484208829072, guid: 15b3940300e4e4af29efa5a11adc1359, type: 3}
   secretKey: {fileID: 8053070484208829072, guid: f8065c478128a41d9912fbf141c8e3be,
     type: 3}
   deadlyKey: {fileID: 8053070484208829072, guid: 95e0dae72bd5a49dbb89e03546b53100,
     type: 3}
-  goal: {fileID: 0}
-  nextLevel: {fileID: 0}
   nextLevelPanel: {fileID: 0}
+  next: {fileID: 0}
+  restartLevel: {fileID: 0}
   stars:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  goal: {fileID: 0}
   score: {fileID: 0}
   alert: {fileID: 0}
   deathReason: {fileID: 0}
-  restartLevel: {fileID: 0}
   animator: {fileID: 3819606124131765940}
-  camera: {fileID: 0}
+  secretKeySound: {fileID: 8300000, guid: fcd6a6ff741174e0e979852bd2b6c969, type: 3}
   deathJump: {fileID: 8300000, guid: 1c58c7f7749b57040b9ca8ab09f7d514, type: 3}
 --- !u!114 &2872055404547818824
 MonoBehaviour:
@@ -201,13 +195,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c103f79fb9d604f82abb6a54de039310, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeLeft: 120
-  levelScore: 0
-  totalScore: 0
+  timeLeft: 400
   timeLeftUI: {fileID: 0}
-  playerScoreUI: {fileID: 0}
+  scoreUI: {fileID: 0}
   coin: {fileID: 8300000, guid: d0440e1e7ebf542a1884646f52220a69, type: 3}
-  secretKey: {fileID: 8300000, guid: fcd6a6ff741174e0e979852bd2b6c969, type: 3}
   key: {fileID: 8300000, guid: 844008b5ad12e4814b4b663bfdbc7487, type: 3}
   animator: {fileID: 0}
 --- !u!95 &3819606124131765940

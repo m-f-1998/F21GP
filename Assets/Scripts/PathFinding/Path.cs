@@ -2,7 +2,7 @@
  * @author Matthew Frankland
  * @email [developer@matthewfrankland.co.uk]
  * @create date 10-02-2021 18:41:10
- * @modify date 19-02-2021 09:26:22
+ * @modify date 21-02-2021 18:10:49
  * @desc [A* Pathfinding - Best Path]
  */
 
@@ -11,38 +11,36 @@ using System.Collections.Generic;
 using System;
 
 public class Path {
-    public static List<Vector2> FindPath(Grid grid, Vector2 pos1, Vector2 pos2, ref List<Vector2> path) {
-        Node startNode = grid.GetNode((int) Math.Ceiling(pos1.x), (int) Math.Ceiling(pos1.y));
-        Node targetNode = grid.GetNode((int) Math.Ceiling(pos2.x), (int) Math.Ceiling(pos2.y));
+    public static List<Vector2> FindPath(GridPath grid, Vector2 pos1, Vector2 pos2, ref List<Vector2> path) {
+        Node start = grid.GetNode((int) Math.Ceiling(pos1.x), (int) Math.Ceiling(pos1.y));
+        Node target = grid.GetNode((int) Math.Ceiling(pos2.x), (int) Math.Ceiling(pos2.y));
 
-        Heap openSet = new Heap(grid.GetSize());
-        HashSet<Node> closedSet = new HashSet<Node>();
-        openSet.Add(startNode);    
+        Heap open = new Heap(grid.GetSize());
+        HashSet<Node> closed = new HashSet<Node>();
+        open.Add(start);    
 
-        while (openSet.GetCount() > 0) {
-            Node currentNode = openSet.RemoveFirst();
-            closedSet.Add(currentNode);
+        while (open.GetCount() > 0) {
+            Node cur = open.Remove();
+            closed.Add(cur);
 
-            if (currentNode == targetNode) {
-                while (currentNode != startNode) {
-                    path.Add(new Vector2(currentNode.GetXPos(), currentNode.GetYPos()));
-                    currentNode = currentNode.parent;
+            if (cur.GetYPos() == target.GetYPos() && cur.GetXPos() == target.GetXPos()) {
+                while (cur != start) {
+                    path.Add(new Vector2(cur.GetXPos(), cur.GetYPos()));
+                    cur = cur.parent;
                 }
                 path.Reverse();
                 break;
             }
 
-            foreach (Node neighbour in grid.GetNeighbours(currentNode)) {
-                if (!neighbour.IsWalkable() || closedSet.Contains(neighbour)) continue;
-                
-                int newMovementCostToNeighbour = currentNode.GCost + GetDistance(currentNode, neighbour);
-                if (newMovementCostToNeighbour < neighbour.GCost || !openSet.Contains(neighbour)) {
-                    neighbour.GCost = newMovementCostToNeighbour;
-                    neighbour.HCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = currentNode;
+            foreach (Node n in grid.GetNeighbours(cur)) {
+                if (!n.IsWalkable() || closed.Contains(n)) continue;
+                int newCost = cur.GCost + GetDistance(cur, n);
+                if (newCost < n.GCost || !open.Contains(n)) {
+                    n.GCost = newCost;
+                    n.HCost = GetDistance(n, target);
+                    n.parent = cur;
 
-                    if (!openSet.Contains(neighbour))
-                        openSet.Add(neighbour);
+                    if (!open.Contains(n)) open.Add(n);
                 }
             }
         }
@@ -50,11 +48,10 @@ public class Path {
         return path;
     }
 
-    private static int GetDistance(Node nodeA, Node nodeB) {
-        int dstX = Mathf.Abs(nodeA.GetXPos() - nodeB.GetXPos());
-        int dstY = Mathf.Abs(nodeA.GetYPos() - nodeB.GetYPos());
-        if (dstX > dstY)
-            return 14 * dstY + 10 * (dstX - dstY);
-        return 14 * dstX + 10 * (dstY - dstX);
+    private static int GetDistance(Node i, Node j) {
+        int k = Mathf.Abs(i.GetXPos() - j.GetXPos());
+        int l = Mathf.Abs(i.GetYPos() - j.GetYPos());
+        if (k > l) return 14 * l + 10 * (k - l);
+        return 14 * k + 10 * (l - k);
     }
 }

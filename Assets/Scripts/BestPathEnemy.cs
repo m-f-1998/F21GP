@@ -16,7 +16,7 @@ public class BestPathEnemy : MonoBehaviour {
     public LayerMask unwalkableMask;
 
     private bool[,] tilesmap;
-    private Grid grid;
+    private GridPath grid;
     private bool active;
     private int index = 0;
 
@@ -25,7 +25,7 @@ public class BestPathEnemy : MonoBehaviour {
         for (int i = 0; i < Constants.WIDTH; i ++)
             for (int j = 0; j < Constants.HEIGHT; j ++)
                 tilesmap[i, j] = !(Physics2D.OverlapCircle(new Vector2(i, j), 0.5f, unwalkableMask)); // true if walkable, false if not
-        grid = new Grid(Constants.WIDTH, Constants.HEIGHT, tilesmap);
+        grid = new GridPath(Constants.WIDTH, Constants.HEIGHT, tilesmap);
     }
 
     void Update() {

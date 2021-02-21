@@ -17,7 +17,7 @@ public class PointPathEnemy : MonoBehaviour {
     public bool reverse = false;
 
     private bool[,] tilesmap;
-    private Grid grid;
+    private GridPath grid;
     private bool newPath = true, directionFlag = false;
     private int pathIndex = 0, goalIndex = 0;
     private List<Vector2> path = new List<Vector2>(); // from (0, 0) to (Constants.WIDTH-1, Constants.HEIGHT-1)
@@ -27,7 +27,7 @@ public class PointPathEnemy : MonoBehaviour {
         for (int i = 0; i < Constants.WIDTH; i ++)
             for (int j = 0; j < Constants.HEIGHT; j ++)
                 tilesmap[i, j] = !(Physics2D.OverlapCircle(new Vector2(i, j), 0.5f, unwalkableMask)); // true if walkable, false if not
-        grid = new Grid(Constants.WIDTH, Constants.HEIGHT, tilesmap);
+        grid = new GridPath(Constants.WIDTH, Constants.HEIGHT, tilesmap);
     }
 
     void Update() {

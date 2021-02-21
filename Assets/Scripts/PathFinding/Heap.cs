@@ -9,60 +9,28 @@
 public class Heap {
 	
 	private Node[] items;
-	private int currentItemCount;
+	private int itemCount;
 	
 	public Heap(int maxHeapSize) {
 		items = new Node[maxHeapSize];
 	}
 
+	//MARK: Getters
+
 	public int GetCount() {
-		return currentItemCount;
+		return itemCount;
 	}
+
+	//MARK: Helper Functions
 
 	public bool Contains(Node item) {
 		return Equals(items[item.GetIndex()], item);
 	}
 	
 	public void Add(Node item) {
-		item.SetIndex(currentItemCount);
-		items[currentItemCount] = item;
-		SortUp(item);
-		currentItemCount++;
-	}
-
-	public Node RemoveFirst() {
-		Node firstItem = items[0];
-		currentItemCount--;
-		items[0] = items[currentItemCount];
-		items[0].SetIndex(0);
-		SortDown(items[0]);
-		return firstItem;
-	}
-
-	void SortDown(Node item) {
-		while (true) {
-			int childIndexLeft = item.GetIndex() * 2 + 1;
-			int childIndexRight = item.GetIndex() * 2 + 2;
-			int swapIndex = 0;
-
-			if (childIndexLeft < currentItemCount) {
-				swapIndex = childIndexLeft;
-
-				if (childIndexRight < currentItemCount)
-					if (items[childIndexLeft].CompareTo(items[childIndexRight]) < 0)
-						swapIndex = childIndexRight;
-
-				if (item.CompareTo(items[swapIndex]) < 0)
-					Swap (item,items[swapIndex]);
-				else return;
-
-			} else return;
-		}
-	}
-	
-	void SortUp(Node item) {
+		item.SetIndex(itemCount);
+		items[itemCount] = item;
 		int parentIndex = (item.GetIndex()-1)/2;
-		
 		while (true) {
 			Node parentItem = items[parentIndex];
 			if (item.CompareTo(parentItem) > 0)
@@ -71,6 +39,27 @@ public class Heap {
 
 			parentIndex = (item.GetIndex()-1)/2;
 		}
+		itemCount++;
+	}
+
+	public Node Remove() {
+		Node first = items[0];
+		itemCount--;
+		items[0] = items[itemCount];
+		items[0].SetIndex(0);
+		while (true) {
+			int left = items[0].GetIndex() * 2 + 1;
+			int right = items[0].GetIndex() * 2 + 2;
+			int index = 0;
+			if (left < itemCount) {
+				index = left;
+				if (right < itemCount)
+					if (items[left].CompareTo(items[right]) < 0) index = right;
+				if (items[0].CompareTo(items[index]) < 0) Swap(items[0], items[index]);
+				else break;
+			} else break;
+		}
+		return first;
 	}
 	
 	void Swap(Node itemA, Node itemB) {

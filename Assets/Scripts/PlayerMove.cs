@@ -25,6 +25,7 @@ public class PlayerMove : MonoBehaviour {
     private bool facingRight = false, grounded = false, doubleJump = false;
     private float jumpHeight = -1;
     private int level = 1;
+    private int numCoins = 0;
 
     void Start() {
         level = 1;
@@ -49,6 +50,7 @@ public class PlayerMove : MonoBehaviour {
     }
 
     void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode) {
+        numCoins = GameObject.FindGameObjectsWithTag("Coin").Length;
         List<List<int>> res = new List<List<int>>(); // min x, max x, y
         foreach (string tag in Constants.spawnable) {
             foreach (GameObject g in GameObject.FindGameObjectsWithTag(tag)) {
@@ -145,6 +147,12 @@ public class PlayerMove : MonoBehaviour {
         return grounded;
     }
 
+    //MARK: Setters
+
+    public void IncreaseCoins(int coins) {
+        coins += coins;
+    }
+
     //MARK: Helper functions
 
     private GameObject createKey(ref List<List<int>> res, GameObject key) {
@@ -228,7 +236,6 @@ public class PlayerMove : MonoBehaviour {
     }
 
     private void SetStars() {
-        var numCoins = GameObject.FindGameObjectsWithTag("Coin").Length;
         var minTime3 = GetComponent<PlayerScore>().timeLeft - (GetComponent<PlayerScore>().timeLeft/3);
         var minTime2 = GetComponent<PlayerScore>().timeLeft - (GetComponent<PlayerScore>().timeLeft/2);
         var stars3 = ((numCoins * (10 + (minTime3 * 5))) + (Constants.keys[level]["NUM_NORMAL_KEYS"] * (20 + (minTime3 * 5)))) + (minTime3 * 5);
