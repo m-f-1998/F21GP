@@ -35,12 +35,12 @@ public class Path {
             foreach (Node n in grid.GetNeighbours(cur)) {
                 if (!n.IsWalkable() || closed.Contains(n)) continue;
                 int newCost = cur.GCost + GetDistance(cur, n);
-                if (newCost < n.GCost || !open.Contains(n)) {
+                if (newCost < n.GCost || !open.NodeExists(n)) {
                     n.GCost = newCost;
                     n.HCost = GetDistance(n, target);
                     n.parent = cur;
 
-                    if (!open.Contains(n)) open.Add(n);
+                    if (!open.NodeExists(n)) open.Add(n);
                 }
             }
         }

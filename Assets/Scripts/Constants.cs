@@ -10,8 +10,8 @@ using System.Collections.Generic;
 
 public class Constants {
     public const int LIVES = 3;
-    public const int HEIGHT = 225;
-    public const int WIDTH = 225;
+    public const int HEIGHT = 300;
+    public const int WIDTH = 300;
 
     public static readonly Dictionary<int, Dictionary<string, int>> keys =
         new Dictionary<int, Dictionary<string, int>>() {
@@ -25,8 +25,8 @@ public class Constants {
                 {"NUM_DEADLY_KEYS", 0},
                 {"NUM_SECRET_KEYS", 0}
             }},
-            { 3,  new Dictionary<string, int>() {
-                {"NUM_NORMAL_KEYS", 3},
+            { 3,  new Dictionary<string, int>() { // Adding more normal keys would require more colours
+                {"NUM_NORMAL_KEYS", 2},
                 {"NUM_DEADLY_KEYS", 1},
                 {"NUM_SECRET_KEYS", 1}
             }}

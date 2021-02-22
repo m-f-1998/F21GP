@@ -11,18 +11,10 @@ using UnityEngine;
 public class Bird : MonoBehaviour {
 
     public GameObject bird;
-    public int spawnCount = 5;
-    public float spawnRadius = 7.0f;
-    public LayerMask searchLayer;
-
-    [Range(0.1f, 20.0f)]
-    public float velocity = 6.0f, rotationCoeff = 4.0f;
-
-    [Range(0.0f, 0.9f)]
-    public float velocityVariation = 0.9f;
-
-    [Range(0.1f, 10.0f)]
-    public float dist = 8.0f;
+    public int count = 5;
+    public float radius = 7.0f;
+    public LayerMask search;
+    public float vel = 6.0f, rotationCoeff = 4.0f, velVar = 0.9f, dist = 8.0f;
 
     private bool coin = false;
 
@@ -32,7 +24,7 @@ public class Bird : MonoBehaviour {
     }
 
     public void Spawn() {
-        for (var i = 0; i < spawnCount; i++) Spawn(transform.position + UnityEngine.Random.insideUnitSphere * spawnRadius);
+        for (var i = 0; i < count; i++) Spawn(transform.position + UnityEngine.Random.insideUnitSphere * radius);
         Invoke("Spawn", Random.Range(Random.Range(10.0f, 30.0f), Random.Range(10.0f, 15.0f)));
     }
 

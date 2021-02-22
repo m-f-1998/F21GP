@@ -23,8 +23,8 @@ public class Heap {
 
 	//MARK: Helper Functions
 
-	public bool Contains(Node item) {
-		return Equals(items[item.GetIndex()], item);
+	public bool NodeExists(Node i) {
+		return Equals(items[i.GetIndex()], i);
 	}
 	
 	public void Add(Node item) {
@@ -36,7 +36,6 @@ public class Heap {
 			if (item.CompareTo(parentItem) > 0)
 				Swap (item,parentItem);
 			else break;
-
 			parentIndex = (item.GetIndex()-1)/2;
 		}
 		itemCount++;
@@ -62,11 +61,11 @@ public class Heap {
 		return first;
 	}
 	
-	void Swap(Node itemA, Node itemB) {
-		items[itemA.GetIndex()] = itemB;
-		items[itemB.GetIndex()] = itemA;
-		int itemAIndex = itemA.GetIndex();
-		itemA.SetIndex(itemB.GetIndex());
-		itemB.SetIndex(itemAIndex);
+	private void Swap(Node i, Node j) {
+		items[i.GetIndex()] = j;
+		items[j.GetIndex()] = i;
+		int index = i.GetIndex();
+		i.SetIndex(j.GetIndex());
+		j.SetIndex(index);
 	}
 }

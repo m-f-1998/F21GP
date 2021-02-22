@@ -24,11 +24,10 @@ public class PlayerMove : MonoBehaviour {
     private System.Random rnd = new System.Random();
     private bool facingRight = false, grounded = false, doubleJump = false;
     private float jumpHeight = -1;
-    private int level = 1;
+    // private int level = 1;
     private int numCoins = 0;
 
     void Start() {
-        level = 1;
         nextLevelPanel.SetActive(false);
         next.onClick.AddListener(NextLevel);
         restartLevel.onClick.AddListener(RestartLevel);
@@ -71,15 +70,15 @@ public class PlayerMove : MonoBehaviour {
             res.Remove(res[ranSafeGround]);
             
             int col = rnd.Next(0, Constants.colorsStandard.Count);
-            if (level != 2) goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[col][0] + "'";
+            if (GetLevel() != 2) goal.text = "Goal: Collect the keys that make the colour '" + Constants.colorsStandard[col][0] + "'";
 
-            for (int i = 0; i < Constants.keys[level]["NUM_NORMAL_KEYS"]; i++)
+            for (int i = 0; i < Constants.keys[GetLevel()]["NUM_NORMAL_KEYS"]; i++)
                 createKey(ref res, key).GetComponent<SpriteRenderer>().color = hexColor(Constants.colorsStandard[col][i + 1]);
 
-            for (int i = 0; i < Constants.keys[level]["NUM_DEADLY_KEYS"]; i++)
+            for (int i = 0; i < Constants.keys[GetLevel()]["NUM_DEADLY_KEYS"]; i++)
                 createKey(ref res, deadlyKey).GetComponent<SpriteRenderer>().color = hexColor(Constants.colorsDeadly[rnd.Next(0, 3)]);
 
-            for (int i = 0; i < Constants.keys[level]["NUM_SECRET_KEYS"]; i++)
+            for (int i = 0; i < Constants.keys[GetLevel()]["NUM_SECRET_KEYS"]; i++)
                 createKey(ref res, secretKey).GetComponent<SpriteRenderer>().color = Color.yellow;
         }
     }
@@ -87,7 +86,7 @@ public class PlayerMove : MonoBehaviour {
     void OnTriggerEnter2D(Collider2D coll) {
         switch (coll.gameObject.tag) {
             case "Exit":
-                if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[level]["NUM_NORMAL_KEYS"]) ShowFinishScene();
+                if (GetComponent<PlayerScore>().GetNumKeysCollected() == Constants.keys[GetLevel()]["NUM_NORMAL_KEYS"]) ShowFinishScene();
                 else CreateAlert("You're Missing Some Keys!");
                 break;
             case "SecretKey":
@@ -140,7 +139,7 @@ public class PlayerMove : MonoBehaviour {
     //MARK: Getters
     
     public int GetLevel() {
-        return level;
+        return Int32.Parse(SceneManager.GetActiveScene().name.Substring(SceneManager.GetActiveScene().name.Length - 1));
     }
 
     public bool GetGrounded() {
@@ -189,18 +188,19 @@ public class PlayerMove : MonoBehaviour {
 
     private void RestartLevel() {
         GetComponent<PlayerScore>().ResetKeys();
-        SceneManager.LoadScene("Level " + level);
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("Level " + GetLevel());
         Camera.main.GetComponent<AudioSource>().Play();
     }
     
     private void NextLevel() {
-        if (level == 3) {
+        if (GetLevel() == 3) {
             GetComponent<PlayerScore>().FinishGame();
             SceneManager.LoadScene("Main Menu");
         } else {
+            Time.timeScale = 1f;
             GetComponent<PlayerScore>().ResetKeys();
-            level += 1;
-            SceneManager.LoadScene("Level " + level);
+            SceneManager.LoadScene("Level " + (GetLevel() + 1));
             Camera.main.GetComponent<AudioSource>().Play();
         }
     }
@@ -238,8 +238,8 @@ public class PlayerMove : MonoBehaviour {
     private void SetStars() {
         var minTime3 = GetComponent<PlayerScore>().timeLeft - (GetComponent<PlayerScore>().timeLeft/3);
         var minTime2 = GetComponent<PlayerScore>().timeLeft - (GetComponent<PlayerScore>().timeLeft/2);
-        var stars3 = ((numCoins * (10 + (minTime3 * 5))) + (Constants.keys[level]["NUM_NORMAL_KEYS"] * (20 + (minTime3 * 5)))) + (minTime3 * 5);
-        var stars2 = ((numCoins * (10 + (minTime2 * 5))) + (Constants.keys[level]["NUM_NORMAL_KEYS"] * (20 + (minTime2 * 5)))) + (minTime2 * 5);
+        var stars3 = ((numCoins * (10 + (minTime3 * 5))) + (Constants.keys[GetLevel()]["NUM_NORMAL_KEYS"] * (20 + (minTime3 * 5)))) + (minTime3 * 5);
+        var stars2 = ((numCoins * (10 + (minTime2 * 5))) + (Constants.keys[GetLevel()]["NUM_NORMAL_KEYS"] * (20 + (minTime2 * 5)))) + (minTime2 * 5);
 
         if (GetComponent<PlayerScore>().GetLevelScore() > minTime3) for (int i = 0; i < 2; i++) stars[i].SetActive(true);
         else if (GetComponent<PlayerScore>().GetLevelScore() > minTime2) for (int i = 0; i < 1; i++) stars[i].SetActive(true);
@@ -247,8 +247,8 @@ public class PlayerMove : MonoBehaviour {
     }
 
     private void ShowFinishScene() {
-        if (int.Parse(PlayerPrefs.GetString("score-level-" + level.ToString())) < GetComponent<PlayerScore>().GetLevelScore())
-            PlayerPrefs.SetString(("score-level-" + level.ToString()), GetComponent<PlayerScore>().GetLevelScore().ToString());
+        if (int.Parse(PlayerPrefs.GetString("score-level-" + GetLevel().ToString())) < GetComponent<PlayerScore>().GetLevelScore())
+            PlayerPrefs.SetString(("score-level-" + GetLevel().ToString()), GetComponent<PlayerScore>().GetLevelScore().ToString());
         nextLevelPanel.SetActive(true);
         Camera.main.GetComponent<AudioSource>().Pause();
         score.text = "Score: " + GetComponent<PlayerScore>().GetLevelScore().ToString();

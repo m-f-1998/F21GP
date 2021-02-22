@@ -30,7 +30,7 @@ public class BirdBehaviour : MonoBehaviour {
             else if (!isMin && curPos.y > Camera.main.GetComponent<CameraSystem>().yMax || isMin && curPos.y < Camera.main.GetComponent<CameraSystem>().yMin) Destroy(gameObject);
             else {
                 var noise = Mathf.PerlinNoise(Time.time, noiseOffset) * 2.0f - 1.0f;
-                var velocity = controller.velocity * (1.0f + noise * controller.velocityVariation);
+                var velocity = controller.vel * (1.0f + noise * controller.velVar);
                 
                 var rotation = getRotation(curPos);
                 if (rotation != curRot) transform.rotation = Quaternion.Slerp(rotation, curRot, Mathf.Exp(-controller.rotationCoeff * Time.deltaTime));
@@ -48,7 +48,10 @@ public class BirdBehaviour : MonoBehaviour {
                     coinDrop = -1f;
                 }
 
-                transform.position = curPos + (isMin ? transform.right * -1 : transform.right) * (velocity * Time.deltaTime);
+                Vector3 newPos = curPos + (isMin ? transform.right * -1 : transform.right) * (velocity * Time.deltaTime);
+                newPos.z = 0;
+
+                transform.position = newPos;
             }
         }
     }
@@ -63,7 +66,7 @@ public class BirdBehaviour : MonoBehaviour {
         var sep = Vector3.zero;
         var ali = controller.transform.forward;
         var coh = controller.transform.position;
-        var nearby = Physics.OverlapSphere(curPos, controller.dist, controller.searchLayer);
+        var nearby = Physics.OverlapSphere(curPos, controller.dist, controller.search);
 
         foreach (var bird in nearby) {
             if (bird.gameObject == gameObject) continue;
